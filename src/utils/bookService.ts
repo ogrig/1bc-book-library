@@ -31,8 +31,8 @@ export const fetchBooks = async (setError: (value: React.SetStateAction<string|n
       const data = await response.json();
       setBooks(data);
       
-    } catch (error: any) {
-      setError(error);
+    } catch (err: any) {
+      setError(err instanceof Error ? err.message : String(err));
       
     } finally {
       setIsLoading(false);
@@ -62,7 +62,7 @@ export const addBook = async (book: Book,
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (err: any) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
       
     } finally {
       setIsLoading(false);
@@ -92,7 +92,7 @@ export const updateBook = async (book: Book,
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (err: any) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
       
     } finally {
       setIsLoading(false);
@@ -122,7 +122,7 @@ export const deleteBook = async (book: Book,
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (err: any) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
       
     } finally {
       setIsLoading(false);
