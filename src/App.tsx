@@ -73,7 +73,7 @@ const BookLibrary = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleBookAvailability = (id: number, borrow: boolean) => {
+  const handleBookAvailability = (id: number | undefined, borrow: boolean) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
       setError('Book not found');
@@ -91,7 +91,7 @@ const BookLibrary = () => {
     ));
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number | undefined) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
       setError('Book not found');
