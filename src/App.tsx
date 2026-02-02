@@ -1,4 +1,5 @@
-import { useState, useEffect, createContext } from 'react';
+import { useState, useEffect } from 'react';
+import { UserContext } from './contexts/UserContext';
 import { Plus, BookOpen } from 'lucide-react';
 import SearchBar from './components/SearchBar';
 import BooksTable from './components/BooksTable';
@@ -21,7 +22,7 @@ const emptyBook: Book = {
     borrower: ''
   };
 
-export const UserContext = createContext(currentUser);
+// export const UserContext = createContext(currentUser);
 
 const BookLibrary = () => {
   const [books, setBooks] = useState(emptyBookList);
@@ -72,10 +73,10 @@ const BookLibrary = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleBookAvailability = (id: any, borrow: boolean) => {
+  const handleBookAvailability = (id: number, borrow: boolean) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
-      setError && setError('Book not found');
+      setError('Book not found');
       return;
     }
 
@@ -90,10 +91,10 @@ const BookLibrary = () => {
     ));
   };
 
-  const handleDelete = (id: any) => {
+  const handleDelete = (id: number) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
-      setError && setError('Book not found');
+      setError('Book not found');
       return;
     }
 
