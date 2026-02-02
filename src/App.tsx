@@ -7,6 +7,7 @@ import type { Book } from './components/components.types';
 import ErrorBox from './components/ErrorBox';
 import AddBookModal from './components/AddBookModal';
 import { addBook, deleteBook, fetchBooks, updateBook } from './utils/bookService';
+import ConfirmDialogModal from './components/ConfirmDialogModal';
 
 // we need a way to identify the current user... API, SSO, etc.
 const currentUser: string = 'John Smith';
@@ -29,6 +30,7 @@ const BookLibrary = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | undefined>(undefined);
   const booksPerPage = 4;
 
   // New book form state
@@ -101,26 +103,8 @@ const BookLibrary = () => {
     setIsLoading(false);
   };
 
-  const handleDelete = async (id: number | undefined) => {
-    const currentBook = books.find(book => book.id === id);
-    if (!currentBook) {
-      setError('Book not found');
-      return;
-    }
-
-    if (window.confirm('Are you sure you want to delete this book?')) {
-        setIsLoading(true);
-        const success = await deleteBook(currentBook, setError);
-
-        if (success) {
-            setBooks(books.filter(book => book.id !== id));
-        } else {
-            // Optionally handle failure (error is already set via setError)
-            // e.g., show a notification or keep the modal open
-        }
-
-        setIsLoading(false);
-    }
+  const handleDelete = (id: number | undefined) => {
+    setConfirmDeleteId(id);
   };
 
   const handleAddBook = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -143,6 +127,24 @@ const BookLibrary = () => {
     }
     setIsLoading(false);
     setIsModalOpen(false);
+  };
+
+  const confirmDelete = async () => {
+    if (confirmDeleteId !== undefined) {
+      const currentBook = books.find(book => book.id === confirmDeleteId);
+      if (!currentBook) {
+        setError('Book not found');
+        setConfirmDeleteId(undefined);
+        return;
+      }
+      setIsLoading(true);
+      const success = await deleteBook(currentBook, setError);
+      if (success) {
+        setBooks(books.filter(book => book.id !== confirmDeleteId));
+      }
+      setIsLoading(false);
+      setConfirmDeleteId(undefined);
+    }
   };
 
   return (
@@ -209,6 +211,15 @@ const BookLibrary = () => {
           newBook = {newBook}
           setNewBook = {setNewBook} 
           handleAddBook = {handleAddBook}
+        />
+      )}
+
+      {/* Add Book Modal */}
+      {confirmDeleteId !== undefined && (
+        <ConfirmDialogModal
+          message="Are you sure you want to delete this book?"
+          onConfirm={confirmDelete}
+          onCancel={() => setConfirmDeleteId(undefined)}
         />
       )}
     </div>
