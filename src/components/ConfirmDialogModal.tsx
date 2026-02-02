@@ -1,5 +1,4 @@
-import React, { type JSX } from 'react';
-import { X } from 'lucide-react';
+import { type JSX } from 'react';
 
 export interface ConfirmDialogModalProps {
   message: string;
