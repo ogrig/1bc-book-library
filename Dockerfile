@@ -15,6 +15,13 @@ RUN if [ -f pnpm-lock.yaml ]; then \
 
 # Copy source and build
 COPY . .
+
+# Build-time API config (pass via --build-arg; e.g. --build-arg VITE_API_KEY=xxx --build-arg VITE_API_URL=https://api.example.com/Books)
+ARG VITE_API_KEY
+ARG VITE_API_URL
+ENV VITE_API_KEY=${VITE_API_KEY}
+ENV VITE_API_URL=${VITE_API_URL}
+
 RUN npm run build
 
 # Production stage - serve with nginx

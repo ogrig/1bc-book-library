@@ -1,8 +1,8 @@
 import type { Book } from "../components/components.types";
 
-const API_KEY: string = '12345678-ABCD-4EFG-9012-HIJK345678LM';
-// const API_URL_HTTPS: string = 'https://localhost:7180/Books';
-const API_URL: string = 'http://localhost:5250/Books';
+/** From env; set VITE_API_KEY and VITE_API_URL (e.g. in .env). Required in production. */
+const API_KEY: string = import.meta.env.VITE_API_KEY ?? '';
+const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:5250/Books';
 
 export const fetchBooks = async (setError: (value: React.SetStateAction<string|null>) => void,
         setIsLoading: (value: React.SetStateAction<boolean>) => void,
