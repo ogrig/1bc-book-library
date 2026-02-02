@@ -71,7 +71,7 @@ const BookLibrary = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleBookAvailability = (id: number | undefined, borrow: boolean) => {
+  const handleBookAvailability = async (id: number | undefined, borrow: boolean) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
       setError('Book not found');
@@ -84,16 +84,24 @@ const BookLibrary = () => {
       borrower: borrow ? currentUser : '',
     };
     
-    updateBook(updatedBook, setError, setIsLoading);
+    setIsLoading(true);
+    const success = await updateBook(updatedBook, setError);
 
-    setBooks(books.map(book =>
-      book.id === id
-        ? updatedBook
-        : book
-    ));
+    if (success) {
+        setBooks(books.map(book =>
+            book.id === id
+                ? updatedBook
+                : book
+        ));
+    } else {
+        // Optionally handle failure (error is already set via setError)
+        // e.g., show a notification or keep the modal open
+    }
+
+    setIsLoading(false);
   };
 
-  const handleDelete = (id: number | undefined) => {
+  const handleDelete = async (id: number | undefined) => {
     const currentBook = books.find(book => book.id === id);
     if (!currentBook) {
       setError('Book not found');
@@ -101,12 +109,21 @@ const BookLibrary = () => {
     }
 
     if (window.confirm('Are you sure you want to delete this book?')) {
-      deleteBook(currentBook, setError, setIsLoading);
-      setBooks(books.filter(book => book.id !== id));
+        setIsLoading(true);
+        const success = await deleteBook(currentBook, setError);
+
+        if (success) {
+            setBooks(books.filter(book => book.id !== id));
+        } else {
+            // Optionally handle failure (error is already set via setError)
+            // e.g., show a notification or keep the modal open
+        }
+
+        setIsLoading(false);
     }
   };
 
-  const handleAddBook = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleAddBook = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     const book: Book = {
       ...newBook,
@@ -114,9 +131,17 @@ const BookLibrary = () => {
       status: 'available',
       borrower: ''
     };
-    addBook(book, setError, setIsLoading);
-    setBooks([...books, book]);
-    setNewBook(emptyBook);
+
+    setIsLoading(true);
+    const success = await addBook(book, setError);
+    if (success) {
+      setBooks([...books, book]);
+      setNewBook(emptyBook);
+    } else {
+      // Optionally handle failure (error is already set via setError)
+      // e.g., show a notification or keep the modal open
+    }
+    setIsLoading(false);
     setIsModalOpen(false);
   };
 
