@@ -1,7 +1,6 @@
 import { useContext, type JSX } from 'react';
 import { UserContext } from '../contexts/UserContext';
 import type { Book } from './components.types';
-//import { UserContext } from '../App';
 
 export interface BooksTableProps {
     currentBooks: Book[];

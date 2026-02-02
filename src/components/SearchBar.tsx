@@ -12,7 +12,7 @@ export interface SearchBarProps {
 
 const SearchBar = ({searchTerm, refreshBooks, handlePrevPage, handleNextPage, currentPage, totalPages}: SearchBarProps): JSX.Element => {
 
-    const handleOnChange = (e: any) => {
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const filter = e.target.value;
         refreshBooks(filter);
     }

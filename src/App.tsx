@@ -22,8 +22,6 @@ const emptyBook: Book = {
     borrower: ''
   };
 
-// export const UserContext = createContext(currentUser);
-
 const BookLibrary = () => {
   const [books, setBooks] = useState(emptyBookList);
   const [searchTerm, setSearchTerm] = useState('');
