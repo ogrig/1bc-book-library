@@ -80,13 +80,17 @@ const BookLibrary = () => {
       return;
     }
 
-    currentBook.status = borrow ? 'borrowed' : 'available';
-    currentBook.borrower = borrow ? currentUser : '';
-    updateBook(currentBook, setError, setIsLoading);
+    const updatedBook: Book = {
+      ...currentBook,
+      status: borrow ? 'borrowed' : 'available',
+      borrower: borrow ? currentUser : '',
+    };
+    
+    updateBook(updatedBook, setError, setIsLoading);
 
     setBooks(books.map(book =>
       book.id === id
-        ? currentBook
+        ? updatedBook
         : book
     ));
   };
