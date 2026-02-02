@@ -77,8 +77,6 @@ export const updateBook = async (book: Book,
         method: 'PUT',
         headers: {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                "mode": "no-cors",
                 'X-API-Key': API_KEY
             },
         body: JSON.stringify(book)

@@ -142,7 +142,7 @@ const BookLibrary = () => {
         </div>
 
         {/* Error Message */}
-        {error &&  <ErrorBox/ > }
+        {error &&  <ErrorBox /> }
 
         {/* Books Table */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
