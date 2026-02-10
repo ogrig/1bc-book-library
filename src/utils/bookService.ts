@@ -4,118 +4,64 @@ import type { Book } from "../components/components.types";
 const API_KEY: string = import.meta.env.VITE_API_KEY ?? '';
 const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:5250/Books';
 
-export const fetchBooks = async (updateError: boolean,
-				setError: (value: React.SetStateAction<string|null>) => void,
-				setIsLoading: (value: React.SetStateAction<boolean>) => void,
-				setBooks: (value: React.SetStateAction<Book[]>) => void) => {
+const getHeaders = () => ({
+  'Content-Type': 'application/json',
+  'X-API-Key': API_KEY
+});
 
-		const requestOptions = {
-				method: 'GET',
-				headers: {
-							'Content-Type': 'application/json',
-							'X-API-Key': API_KEY
-						}
-		};
+export const fetchBooks = async (): Promise<Book[]> => {
+  const requestOptions = {
+    method: 'GET',
+    headers: getHeaders()
+  };
 
-		if (updateError) setError(null);
-		setIsLoading(true);
+  const response = await fetch(API_URL, requestOptions);
 
-		try {
-			const response = await fetch(API_URL, requestOptions);
-			
-			if (!response.ok) {
-				console.log('Fetch error:', response);
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			
-			const data = await response.json();
-			setBooks(data);
-		} catch (err: any) {
-			if (updateError) setError(err instanceof Error ? err.message : String(err));
-			
-		} finally {
-			setIsLoading(false);
-		}
-	};
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
 
-
-export const addBook = async (
-	book: Book,
-	setError: (value: React.SetStateAction<string | null>) => void
-): Promise<boolean> => {
-		const requestOptions = {
-				method: 'POST',
-				headers: {
-							'Content-Type': 'application/json',
-							'X-API-Key': API_KEY
-						},
-				body: JSON.stringify(book)
-		};
-
-		try {
-			const response = await fetch(API_URL, requestOptions);
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-		} catch (err: any) {
-			setError(err instanceof Error ? err.message : String(err));
-			return false;
-		}
-		return true;
-}
-
-export const updateBook = async (book: Book,
-		setError: (value: React.SetStateAction<string|null>) => void
-): Promise<boolean> => { 
-
-		const requestOptions = {
-				method: 'PUT',
-				headers: {
-							'Content-Type': 'application/json',
-							'X-API-Key': API_KEY
-						},
-				body: JSON.stringify(book)
-		};
-
-		try {
-			const response = await fetch(API_URL + '/' + book.id, requestOptions);
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-		} catch (err: any) {
-			setError(err instanceof Error ? err.message : String(err));
-			return false;
-		}
-
-		return true;
-	};
-
-export const deleteBook = async (book: Book,
-		setError: (value: React.SetStateAction<string|null>) => void
-): Promise<boolean> => { 
-
-		const requestOptions = {
-				method: 'DELETE',
-				headers: {
-							'Content-Type': 'application/json',
-							'X-API-Key': API_KEY
-						},
-				body: JSON.stringify(book)
-		};
-
-		try {
-			const response = await fetch(API_URL + '/' + book.id, requestOptions);
-
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-		} catch (err: any) {
-			setError(err instanceof Error ? err.message : String(err));
-			return false;      
-		}
-
-		return true;
+  return await response.json();
 };
 
+export const addBook = async (book: Book): Promise<void> => {
+  const requestOptions = {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify(book)
+  };
+
+  const response = await fetch(API_URL, requestOptions);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+};
+
+export const updateBook = async (book: Book): Promise<void> => {
+  const requestOptions = {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(book)
+  };
+
+  const response = await fetch(`${API_URL}/${book.id}`, requestOptions);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+};
+
+export const deleteBook = async (book: Book): Promise<void> => {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: getHeaders(),
+    body: JSON.stringify(book)
+  };
+
+  const response = await fetch(`${API_URL}/${book.id}`, requestOptions);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+};

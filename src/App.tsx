@@ -36,10 +36,23 @@ const BookLibrary = () => {
   // New book form state
   const [newBook, setNewBook] = useState(emptyBook);
 
+  const loadBooks = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchBooks();
+      setBooks(data);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fetch books from API
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      fetchBooks(true, setError, setIsLoading, setBooks);
+      loadBooks();
     }, 800);
 
     return () => {
@@ -65,7 +78,6 @@ const BookLibrary = () => {
     const indexOfLastBook = currentPage * booksPerPage;
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
     const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
-    console.log('Pagination calculated:', { totalPages, currentBooks });
     return { totalPages, currentBooks };
   }
 
@@ -92,11 +104,14 @@ const BookLibrary = () => {
     };
     
     setIsLoading(true);
-    const success = await updateBook(updatedBook, setError);
-
-    fetchBooks(success, setError, setIsLoading, setBooks);
-
-    setIsLoading(false);
+    try {
+      await updateBook(updatedBook);
+      await loadBooks();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDelete = (id: number | undefined) => {
@@ -112,16 +127,16 @@ const BookLibrary = () => {
     };
 
     setIsLoading(true);
-    const success = await addBook(book, setError);
-    if (success) {
+    try {
+      await addBook(book);
       setBooks([...books, book]);
       setNewBook(emptyBook);
-    } else {
-      // Optionally handle failure (error is already set via setError)
-      // e.g., show a notification or keep the modal open
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsLoading(false);
+      setIsModalOpen(false);
     }
-    setIsLoading(false);
-    setIsModalOpen(false);
   };
 
   const confirmDelete = async () => {
@@ -133,12 +148,15 @@ const BookLibrary = () => {
         return;
       }
       setIsLoading(true);
-      const success = await deleteBook(currentBook, setError);
-      if (success) {
+      try {
+        await deleteBook(currentBook);
         setBooks(books.filter(book => book.id !== confirmDeleteId));
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setIsLoading(false);
+        setConfirmDeleteId(undefined);
       }
-      setIsLoading(false);
-      setConfirmDeleteId(undefined);
     }
   };
 
