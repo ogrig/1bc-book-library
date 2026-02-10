@@ -9,8 +9,8 @@ type Book =
   isbn: string,
   publishedDate: string,
   owner: string,
-  status: AvailabilityStatus,
-  borrower: string
+  borrower: string,
+  version: number
 };
 export type { Book };
 

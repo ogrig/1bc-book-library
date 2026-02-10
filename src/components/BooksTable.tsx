@@ -12,7 +12,7 @@ const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksT
     const currentUser = useContext(UserContext);
 
     const canReturnBook = (book: Book): boolean => {
-        return book.status === 'borrowed' &&
+        return book.borrower !== '' &&
             (book.borrower === currentUser || book.owner === currentUser);
     }
 
@@ -47,7 +47,7 @@ const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksT
                     </td>
                     <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                        {book.status === 'available' ? (
+                        {book.borrower === '' ? (
                         <>
                             <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
                             Available

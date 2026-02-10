@@ -19,8 +19,8 @@ const emptyBook: Book = {
     isbn: '',
     publishedDate: '',
     owner: currentUser,
-    status: 'available', // available, borrowed
-    borrower: ''
+    borrower: '',
+    version: 1
   };
 
 const BookLibrary = () => {
@@ -39,7 +39,7 @@ const BookLibrary = () => {
   // Fetch books from API
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      fetchBooks(setError, setIsLoading, setBooks);
+      fetchBooks(true, setError, setIsLoading, setBooks);
     }, 800);
 
     return () => {
@@ -60,10 +60,16 @@ const BookLibrary = () => {
   );
 
   // Pagination
-  const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
-  const indexOfLastBook = currentPage * booksPerPage;
-  const indexOfFirstBook = indexOfLastBook - booksPerPage;
-  const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+  const calculatePagination = () => {
+    const totalPages = Math.ceil(filteredBooks.length / booksPerPage);
+    const indexOfLastBook = currentPage * booksPerPage;
+    const indexOfFirstBook = indexOfLastBook - booksPerPage;
+    const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+    console.log('Pagination calculated:', { totalPages, currentBooks });
+    return { totalPages, currentBooks };
+  }
+
+  let { totalPages, currentBooks } = calculatePagination();
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -82,23 +88,13 @@ const BookLibrary = () => {
 
     const updatedBook: Book = {
       ...currentBook,
-      status: borrow ? 'borrowed' : 'available',
       borrower: borrow ? currentUser : '',
     };
     
     setIsLoading(true);
     const success = await updateBook(updatedBook, setError);
 
-    if (success) {
-        setBooks(books.map(book =>
-            book.id === id
-                ? updatedBook
-                : book
-        ));
-    } else {
-        // Optionally handle failure (error is already set via setError)
-        // e.g., show a notification or keep the modal open
-    }
+    fetchBooks(success, setError, setIsLoading, setBooks);
 
     setIsLoading(false);
   };
@@ -112,7 +108,6 @@ const BookLibrary = () => {
     const book: Book = {
       ...newBook,
       id: Math.max(...books.map(b => b.id), 0) + 1,
-      status: 'available',
       borrower: ''
     };
 
@@ -171,7 +166,7 @@ const BookLibrary = () => {
         </div>
 
         {/* Error Message */}
-        {error &&  <ErrorBox /> }
+        {error &&  <ErrorBox errorMessage={error} /> }
 
         {/* Books Table */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">

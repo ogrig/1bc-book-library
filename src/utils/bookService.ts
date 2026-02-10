@@ -4,35 +4,34 @@ import type { Book } from "../components/components.types";
 const API_KEY: string = import.meta.env.VITE_API_KEY ?? '';
 const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:5250/Books';
 
-export const fetchBooks = async (setError: (value: React.SetStateAction<string|null>) => void,
+export const fetchBooks = async (updateError: boolean,
+				setError: (value: React.SetStateAction<string|null>) => void,
 				setIsLoading: (value: React.SetStateAction<boolean>) => void,
 				setBooks: (value: React.SetStateAction<Book[]>) => void) => {
 
 		const requestOptions = {
 				method: 'GET',
 				headers: {
-								'Content-Type': 'application/json',
-								'Access-Control-Allow-Origin': '*',
-								"mode": "no-cors",
-								'X-API-Key': API_KEY
+							'Content-Type': 'application/json',
+							'X-API-Key': API_KEY
 						}
 		};
 
-		setError(null);
+		if (updateError) setError(null);
 		setIsLoading(true);
 
 		try {
 			const response = await fetch(API_URL, requestOptions);
 			
 			if (!response.ok) {
+				console.log('Fetch error:', response);
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			
 			const data = await response.json();
 			setBooks(data);
-			
 		} catch (err: any) {
-			setError(err instanceof Error ? err.message : String(err));
+			if (updateError) setError(err instanceof Error ? err.message : String(err));
 			
 		} finally {
 			setIsLoading(false);
@@ -47,10 +46,8 @@ export const addBook = async (
 		const requestOptions = {
 				method: 'POST',
 				headers: {
-								'Content-Type': 'application/json',
-								'Access-Control-Allow-Origin': '*',
-								"mode": "no-cors",
-								'X-API-Key': API_KEY
+							'Content-Type': 'application/json',
+							'X-API-Key': API_KEY
 						},
 				body: JSON.stringify(book)
 		};
@@ -63,9 +60,9 @@ export const addBook = async (
 			}
 		} catch (err: any) {
 			setError(err instanceof Error ? err.message : String(err));
-			return false; // failure
+			return false;
 		}
-		return true; // success
+		return true;
 }
 
 export const updateBook = async (book: Book,
@@ -75,8 +72,8 @@ export const updateBook = async (book: Book,
 		const requestOptions = {
 				method: 'PUT',
 				headers: {
-								'Content-Type': 'application/json',
-								'X-API-Key': API_KEY
+							'Content-Type': 'application/json',
+							'X-API-Key': API_KEY
 						},
 				body: JSON.stringify(book)
 		};
@@ -102,10 +99,8 @@ export const deleteBook = async (book: Book,
 		const requestOptions = {
 				method: 'DELETE',
 				headers: {
-								'Content-Type': 'application/json',
-								'Access-Control-Allow-Origin': '*',
-								"mode": "no-cors",
-								'X-API-Key': API_KEY
+							'Content-Type': 'application/json',
+							'X-API-Key': API_KEY
 						},
 				body: JSON.stringify(book)
 		};
