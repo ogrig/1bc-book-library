@@ -1,5 +1,4 @@
-import { useContext, type JSX } from 'react';
-import { UserContext } from '../contexts/UserContext';
+import { useUserContext } from '../contexts/UserContext';
 import type { Book } from './components.types';
 
 export interface BooksTableProps {
@@ -9,7 +8,7 @@ export interface BooksTableProps {
 }
 
 const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksTableProps): JSX.Element => {
-    const currentUser = useContext(UserContext);
+    const currentUser = useUserContext();
 
     const canReturnBook = (book: Book): boolean => {
         return book.borrower !== '' &&
