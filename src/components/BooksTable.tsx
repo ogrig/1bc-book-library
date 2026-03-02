@@ -60,9 +60,14 @@ const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksT
                         </>
                         ) : (
                         <>
-                            <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
-                            Borrowed by {book.borrower}
-                            </span>
+                            <div className="group relative flex justify-center">
+                                <span className="line-through decoration-2 decoration-solid decoration-red-400 px-3 py-1 bg-gray-400 text-gray-200 rounded-full text-sm font-medium">
+                                Available
+                                </span>
+                                <span className="absolute left-10 bottom-full mb-2 hidden group-hover:block px-3 py-1 text-sm text-white bg-gray-600 rounded-lg shadow-lg">
+                                    Borrowed by {book.borrower}
+                                </span>
+                            </div>
                             <button
                             onClick={() => handleBookAvailability(book.id, false)}
                             className="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 text-sm transition disabled:bg-gray-400 disabled:cursor-not-allowed"
