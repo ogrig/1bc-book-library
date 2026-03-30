@@ -7,7 +7,7 @@ export interface BooksTableProps {
     handleDelete: (id: number|undefined) => void;
 }
 
-const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksTableProps): JSX.Element => {
+const BooksTable = ({currentBooks, handleBookAvailability, handleDelete}: BooksTableProps) => {
     const currentUser = useUserContext();
 
     const canReturnBook = (book: Book): boolean => {
