@@ -8,6 +8,7 @@ import ErrorBox from './components/ErrorBox';
 import AddBookModal from './components/AddBookModal';
 import { addBook, deleteBook, fetchBooks, updateBook } from './utils/bookService';
 import ConfirmDialogModal from './components/ConfirmDialogModal';
+import NavBar from './components/NavBar';
 
 // we need a way to identify the current user... API, SSO, etc.
 const currentUser: string = 'John Smith';
@@ -172,15 +173,22 @@ const BookLibrary = () => {
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          {/* Search Box */}
-          <SearchBar
-            searchTerm={searchTerm}
-            refreshBooks={refreshBooks}
-            handlePrevPage={handlePrevPage}
-            handleNextPage={handleNextPage}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
+          <div className="relative mb-4">
+            <div className="flex justify-between items-center">
+              {/* Search Box */}
+              <SearchBar
+                searchTerm={searchTerm}
+                refreshBooks={refreshBooks}
+              />
+              {/* Navigatiob Buttons */}
+              <NavBar
+                handlePrevPage={handlePrevPage}
+                handleNextPage={handleNextPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Error Message */}
